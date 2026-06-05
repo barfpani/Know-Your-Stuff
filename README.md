@@ -11,6 +11,21 @@
 * 📊 Interactive price history graphs
 * 🎯 Context-aware insights based on sales events and product launch cycles
 
+## Vision
+
+Most price-tracking tools tell users what happened to a product's price.
+
+**Know Your Stuff** aims to answer a more important question:
+
+> **"Should I buy this product now, or wait?"**
+
+By combining historical pricing data, market events, and AI-generated insights, the goal is to provide users with actionable purchasing guidance in a single click.
+
+---
+
+*Built to simplify online shopping through data-driven decision making.*
+
+
 ## How It Works
 
 When a user visits a product page on an e-commerce website and opens the extension:
@@ -65,17 +80,3 @@ The project is under active development. Initial focus areas include:
 * Price history tracking
 * Data collection pipeline
 * Recommendation engine development
-
-## Vision
-
-Most price-tracking tools tell users what happened to a product's price.
-
-**Know Your Stuff** aims to answer a more important question:
-
-> **"Should I buy this product now, or wait?"**
-
-By combining historical pricing data, market events, and AI-generated insights, the goal is to provide users with actionable purchasing guidance in a single click.
-
----
-
-*Built to simplify online shopping through data-driven decision making.*

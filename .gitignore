@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+*/.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.*
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# IDE and editor settings
+.idea/
+.vscode/
+
+# Browser extension local artifacts
+*.crx
+*.pem

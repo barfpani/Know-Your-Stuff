@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Know Your Stuff</title>
+
+    <link rel="stylesheet" href="popup.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Know Your Stuff</h1>
+    </header>
+
+    <section class="product-section">
+
+        <h2 id="product-name">
+            Samsung Galaxy S25 Ultra
+        </h2>
+
+        <p class="current-price">
+            ₹79,999
+        </p>
+
+    </section>
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <span>Lowest</span>
+            <strong id="lowest-price">
+                ₹69,999
+            </strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Highest</span>
+            <strong id="highest-price">
+                ₹1,29,999
+            </strong>
+        </div>
+
+    </section>
+
+    <section class="chart-section">
+
+        <canvas id="priceChart"></canvas>
+
+    </section>
+
+    <section class="recommendation">
+
+        <h3>Recommendation</h3>
+
+        <div id="recommendation-badge"
+             class="badge wait">
+            WAIT
+        </div>
+
+        <p id="recommendation-text">
+
+            Big Billion Days is expected in
+            23 days. Historical trends
+            suggest further discounts.
+
+        </p>
+
+    </section>
+
+    <footer>
+
+        Last Updated:
+        <span id="last-updated">
+            Today
+        </span>
+
+    </footer>
+
+</div>
+
+<script src="popup.js"></script>
+
+</body>
+</html>

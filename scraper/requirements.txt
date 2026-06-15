@@ -1,0 +1,11 @@
+# Browser automation and parsing
+playwright
+beautifulsoup4
+lxml
+
+# HTTP and data handling
+requests
+pandas
+
+# Database
+psycopg[binary]

@@ -1,0 +1,10 @@
+# Backend API
+fastapi
+uvicorn[standard]
+
+# Database
+psycopg[binary]
+
+# Data handling
+pandas
+requests

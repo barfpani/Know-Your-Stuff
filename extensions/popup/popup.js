@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/api/product/demo";
+const API_URL = "http://127.0.0.1:8000/api/product/1";
 
 let priceChart;
 
@@ -80,7 +80,7 @@ async function loadProductData() {
         console.error(error);
         document.getElementById("product-name").textContent = "Unable to load product";
         document.getElementById("recommendation-text").textContent =
-            "Could not fetch data from the backend. Make sure the FastAPI server is running.";
+            "Could not fetch data from the backend. Check FastAPI and PostgreSQL.";
     }
 }
 

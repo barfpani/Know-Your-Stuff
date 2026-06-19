@@ -18,11 +18,12 @@ VALUES
 INSERT INTO price_history (product_listing_id, price, currency, in_stock, source_type, captured_at)
 VALUES
     (1, 129999, 'INR', TRUE, 'scraper', '2025-01-25 10:00:00'),
-    (1, 127999, 'INR', TRUE, 'scraper', '2025-01-25 10:05:00'),
-    (1, 109999, 'INR', TRUE, 'scraper', '2025-01-25 10:10:00'),
-    (1, 99999, 'INR', TRUE, 'scraper', '2025-01-25 10:00:00'),
-    (1, 64999, 'INR', TRUE, 'scraper', '2025-01-25 10:05:00'),
-    (1, 89999, 'INR', TRUE, 'scraper', '2025-01-25 10:10:00');
+    (1, 119999, 'INR', TRUE, 'scraper', '2025-02-22 10:00:00'),
+    (1, 109999, 'INR', TRUE, 'scraper', '2025-03-31 10:00:00'),
+    (1, 139999, 'INR', TRUE, 'scraper', '2025-05-05 10:00:00'),
+    (1, 99999, 'INR', TRUE, 'scraper', '2025-06-23 10:00:00'),
+    (1, 129999, 'INR', TRUE, 'scraper', '2025-07-22 10:00:00');
+    
 
 INSERT INTO sales_events (name, retailer_id, start_date, end_date, description)
 VALUES

@@ -10,14 +10,16 @@ function formatPrice(value) {
     }).format(value);
 }
 
-function updateRecommendation(action, message) {
+function updateRecommendation(action, confidenceScore, message) {
     const badge = document.getElementById("recommendation-badge");
     const text = document.getElementById("recommendation-text");
+    const scoreEl = document.getElementById("confidence-score");
 
     badge.textContent = action;
     badge.classList.remove("buy", "wait");
     badge.classList.add(action === "BUY" ? "buy" : "wait");
 
+    scoreEl.textContent = confidenceScore !== null ? `${confidenceScore}%` : "N/A";
     text.textContent = message;
 }
 
@@ -72,6 +74,7 @@ async function loadProductData() {
 
         updateRecommendation(
             data.recommendation.action,
+            data.recommendation.confidence_score,
             data.recommendation.message
         );
 

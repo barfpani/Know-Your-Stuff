@@ -31,4 +31,4 @@ VALUES
 
 INSERT INTO recommendation_logs (product_id, current_listing_id, recommendation_type, reason_summary, confidence_score)
 VALUES
-    (1, 1, 'WAIT', 'Big Billion Days is approaching and the product has historically dropped during major sales events', 87.50);
+    (1, 1, 'BUY', 'Big Billion Days is approaching and the product has historically dropped during major sales events', 87.50);

@@ -15,7 +15,7 @@ VALUES
     (1, 1, 'http://www.flipkart.com/sample-s25-ultra', 'FK-S25U-001', 'Samsung Galaxy S25 Ultra'),
     (1, 2, 'http://www.amazon.in/sample-s25-ultra', 'AMZ-S25U-001', 'Samsung Galaxy S25 Ultra');
 
-INSERT INTO price_history (product_listing_id, price, currency, in_stock, source_type, captured_at)
+INSERT INTO price_history (product_listing_id, price, currency, in_stock, source_type, captu red_at)
 VALUES
     (1, 129999, 'INR', TRUE, 'scraper', '2025-01-25 10:00:00'),
     (1, 119999, 'INR', TRUE, 'scraper', '2025-02-22 10:00:00'),

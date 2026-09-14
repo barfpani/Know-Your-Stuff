@@ -1,8 +1,13 @@
-const API_URL = "http://127.0.0.1:8000/api/product/1";
+let produceData = null;
 
-let priceChart;
+//Format price
 
 function formatPrice(value) {
+    
+    if(value === null || value === undefined) {
+        return "N/A";
+    }
+
     return new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
@@ -10,81 +15,102 @@ function formatPrice(value) {
     }).format(value);
 }
 
-function updateRecommendation(action, confidenceScore, message) {
-    const badge = document.getElementById("recommendation-badge");
-    const text = document.getElementById("recommendation-text");
-    const scoreEl = document.getElementById("confidence-score");
+//Display Product
 
-    badge.textContent = action;
-    badge.classList.remove("buy", "wait");
-    badge.classList.add(action === "BUY" ? "buy" : "wait");
+function displayProduct(data) {
 
-    scoreEl.textContent = confidenceScore !== null ? `${confidenceScore}%` : "N/A";
-    text.textContent = message;
+    productData = data;
+
+    document.getElementById("product-name").textContent =
+        data.title || "Unknown Product";
+
+    document.getElementById("current-price").textContent = 
+        formatPrice(data.price);
+
+    document.getElementById("last-updated").textContent =
+        "Just Now";
+
+    // Prototype will not have these
+
+    document.getElementById("lowest-price").textContent =
+        "N/A";
+
+    document.getElementById("highest-price").textContent =
+        "N/A";
+
+    document.getElementById("recommnedation-badge").textContent =
+        "TEST";
+
+    document.getElementById("confidence-score").textContent =
+        "N/A";
+
+    document.getElementById("recommendation-text").textContent =
+        `Product detected successfully from ${data.source}.`;
+
+    console.log("Know Your Stuff - Popup received:", data);
 }
 
-function renderChart(priceHistory) {
-    const ctx = document.getElementById("priceChart");
-
-    if (priceChart) {
-        priceChart.destroy();
-    }
-
-    priceChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: priceHistory.map((point) => point.label),
-            datasets: [
-                {
-                    label: "Price",
-                    data: priceHistory.map((point) => point.price),
-                    borderWidth: 2,
-                    tension: 0.3,
-                    borderColor: "#00d26a",
-                    backgroundColor: "rgba(0, 210, 106, 0.15)",
-                    fill: true,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-            },
-        },
-    });
-}
+//Fetching active tab data
 
 async function loadProductData() {
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-            throw new Error(`Request failed: ${response.status}`);
+
+    try{
+
+        const [tab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true
+        });
+
+        if(!tab?.id) {
+            throw new Error("No active tab found");
         }
 
-        const data = await response.json();
+        chrome.tabs.sendMessage(
+            tab.id,
+            {
+                type: "GET_PRODUCT_DATA"
+            },
+            (response) => {
 
-        document.getElementById("product-name").textContent = data.product_name;
-        document.getElementById("current-price").textContent = formatPrice(data.current_price);
-        document.getElementById("lowest-price").textContent = formatPrice(data.lowest_price);
-        document.getElementById("highest-price").textContent = formatPrice(data.highest_price);
-        document.getElementById("last-updated").textContent = data.last_updated;
+                if(chrome.runtime.lastError){
 
-        updateRecommendation(
-            data.recommendation.action,
-            data.recommendation.confidence_score,
-            data.recommendation.message
+                    console.error(
+                        chrome.runtime.lastError.message
+                    );
+
+                    showError();
+                    return;
+                }
+
+                if(!response) {
+                    showError();
+                    return;
+                }
+
+                displayProduct(response);
+            }
         );
-
-        renderChart(data.price_history);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
-        document.getElementById("product-name").textContent = "Unable to load product";
-        document.getElementById("recommendation-text").textContent =
-            "Could not fetch data from the backend. Check FastAPI and PostgreSQL.";
+        showError();
     }
 }
+
+//Error State
+
+function showError() {
+
+    document.getElementById("product-name").textContent = 
+        "No Product detected";
+
+    document.getElementById("current-price").textContent = 
+        "N/A";
+
+    document.getElementById("recommendation-text").textContent = 
+        "Open a supported Flipkart product page and try again.";
+}
+
+//starting point
 
 loadProductData();

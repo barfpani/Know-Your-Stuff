@@ -38,24 +38,26 @@ function parseCurrentPage(){
     }
 }
 
-// send product data
+let currentProductData = null;
 
-function sendProductData(){
+//Extracting product when the content script loads
 
-    const productData = parseCurrentPage();
+currentProductData = parseCurrentPage();
 
-    if(!productData) {
-        return;
+console.log(
+    "Know Your Stuff - Detected:",
+    currentProductData
+);
+
+//Listening for popup requests
+
+chrome.runtime.onMessage.addListener(
+    (message, sender, sendResponse) => {
+
+        if(message.type === "GET_PRODUCT_DATA") {
+
+            sendResponse(currentProductData);
+        }
     }
+);
 
-    console.log("Know your stuff - Product Data:", productData);
-
-    chrome.runtime.sendMessage({
-        type: "PRODUCT_DATA",
-        data: productData
-    });
-}
-
-//initialize
-
-sendProductData();

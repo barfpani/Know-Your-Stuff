@@ -1,6 +1,4 @@
-
-
-export function parsePrice(priceText) {
+function parsePrice(priceText) {
     
     if(!priceText){
         return null;

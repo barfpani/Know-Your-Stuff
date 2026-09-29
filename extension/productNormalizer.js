@@ -1,6 +1,4 @@
-
-
-export function normalizeProduct(product) {
+function normalizeProduct(product) {
 
     return {
         title: cleanText(product.title),

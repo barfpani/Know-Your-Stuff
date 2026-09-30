@@ -26,12 +26,13 @@ function parseFlipkartProduct() {
 
     console.log("Parsed price:", parsedPrice);
 
+
     //Return raw data
 
     const product = {
         title: rawTitle,
         price: parsedPrice,
-        availability: "TEST",
+        availability: availability || "UNKNOWN",
         url: window.location.href,
         source: "Flipkart"
     };
@@ -45,4 +46,58 @@ function parseFlipkartProduct() {
     console.log("After normalization:", normalizedProduct);
 
     return normalizedProduct;
+}
+
+// Availability
+
+function getAvailability(){
+
+    const pageText = document.body.innerText.toLowerCase();
+
+    const hasOutofStock = pageText.includes("out of stock");
+
+    const hasNotifyMe = pageText.includes("notify me");
+
+    const hasBuyNow = pageText.includes("buy now");
+
+    console.log("Out of stock text: ", hasOutofStock);
+    console.log("Notify me: ", hasNotifyMe);
+    console.log("Buy now: ", hasBuyNow);
+
+    // product is actually unavailable
+    if(hasOutofStock && hasNotifyMe){
+        return "OUT_OF_STOCK";
+    }
+
+    // It is purchasable
+    if(hasBuyNow){
+        return "IN_STOCK";
+    }
+
+    return "UNKNOWN";
+}
+
+    const availability = getAvailability();
+
+    console.log("Availability:", availability);
+
+
+// Find button
+
+function findButton(text){
+    
+    const elements = document.querySelectorAll(
+        "button, div"
+    );
+
+    for(const element of elements){
+
+        const elementText = element.innerText?.trim().toLowerCase();
+
+        if(elementText === text) {
+            return element;
+        }
+    }
+
+    return null;
 }

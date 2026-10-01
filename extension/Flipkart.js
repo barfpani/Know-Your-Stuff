@@ -45,6 +45,8 @@ function parseFlipkartProduct() {
 
     console.log("After normalization:", normalizedProduct);
 
+    console.log("Product URL:", normalizedProduct.url);
+
     return normalizedProduct;
 }
 

@@ -39,6 +39,10 @@ function displayProduct(data) {
 
     document.getElementById("status-text").textContent = "Product detected succesfully.";
 
+    // URL
+
+    document.getElementById("product-url").textContent = data.url || "N/A";
+
     // Last updated 
 
     document.getElementById("last-updated").textContent = "just now";

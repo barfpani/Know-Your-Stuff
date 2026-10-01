@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
 
-    width: 400px;
+    width: 800px;
 
     font-family: Arial, sans-serif;
 
@@ -16,7 +16,7 @@ body {
 
 header h1 {
     margin: 0;
-    font-size: 22px;
+    font-size: 24px;
 }
 
 .product-section{
@@ -32,9 +32,9 @@ header h1 {
 
 .stats {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 
-    margin-top: 15px;
+    margin-top: 25px;
 }
 
 .stat-card{
@@ -111,7 +111,7 @@ header h1 {
 
 footer{
 
-    margin-top: 20px;
+    margin-top: 12px;
 
     font-size: 12px;
 

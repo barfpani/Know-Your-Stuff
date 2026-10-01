@@ -1,116 +1,127 @@
-let produceData = null;
-
-//Format price
+// Format Price
 
 function formatPrice(value) {
-    
-    if(value === null || value === undefined) {
+
+    if(value === null || value === undefined){
         return "N/A";
     }
 
     return new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
-        maximumFractionDigits: 0,
-    }).format(value);
+        maximumFractionDigits: 0
+    }).format(value);                                                        
 }
 
-//Display Product
+// Display product data
 
 function displayProduct(data) {
+    if(!data) {
+        showError("No product data received.");
+        return;
+    }
 
-    productData = data;
+    console.log("Know your stuff - Product received:", data)
 
-    document.getElementById("product-name").textContent =
-        data.title || "Unknown Product";
+    // Product name
 
-    document.getElementById("current-price").textContent = 
-        formatPrice(data.price);
+    document.getElementById("product-name").textContent = data.title || "Unknown Product";
 
-    document.getElementById("last-updated").textContent =
-        "Just Now";
+    // current price
 
-    // Prototype will not have these
+    document.getElementById("current-price").textContent = formatPrice(data.price);
 
-    document.getElementById("lowest-price").textContent =
-        "N/A";
+    // Availability 
 
-    document.getElementById("highest-price").textContent =
-        "N/A";
+    document.getElementById("availability").textContent = data.availability || "UNKNOWN";
 
-    document.getElementById("recommnedation-badge").textContent =
-        "TEST";
+    // status
 
-    document.getElementById("confidence-score").textContent =
-        "N/A";
+    document.getElementById("status-text").textContent = "Product detected succesfully.";
 
-    document.getElementById("recommendation-text").textContent =
-        `Product detected successfully from ${data.source}.`;
+    // Last updated 
 
-    console.log("Know Your Stuff - Popup received:", data);
+    document.getElementById("last-updated").textContent = "just now";
+
 }
 
-//Fetching active tab data
+// Error state
+
+function showError(message) {
+
+
+    console.error("Know Your Stuff:", message);
+
+    document.getElementById("Product-name").textContent = "No product detected";
+
+    document.getElementById("current-price").textContent = "N/A";
+
+    document.getElementById("Availability").textContent = "N/A";
+
+    document.getElementById("source").textContent = "N/A";
+
+    document.getElementById("product-url").textContent = "N/A";
+
+    document.getElementById("status-text").textContent = message;
+
+}
+
+// Request product data
 
 async function loadProductData() {
 
-    try{
+    try {
+        
+        console.log("Know Your Stuff: Requesting product data...");
 
         const [tab] = await chrome.tabs.query({
             active: true,
             currentWindow: true
         });
 
-        if(!tab?.id) {
-            throw new Error("No active tab found");
+        if(!tab || !tab.id) {
+            showError("Could not find the active tab.");
+            return;
         }
+
+        console.log("Active tab:", tab.url);
 
         chrome.tabs.sendMessage(
             tab.id,
             {
-                type: "GET_PRODUCT_DATA"
+                type:"GET_PRODUCT_DATA"
             },
             (response) => {
+                
+                //checking for messaging errors
 
-                if(chrome.runtime.lastError){
+                if(chrome.runtime.lastError) {
 
                     console.error(
+                        "Message error:",
                         chrome.runtime.lastError.message
                     );
 
-                    showError();
+                    showError("Could not connect to the product page.");
+
                     return;
                 }
 
-                if(!response) {
-                    showError();
-                    return;
-                }
+                console.log("response from content.js", response);
 
                 displayProduct(response);
             }
         );
     }
     catch (error) {
-        console.error(error);
-        showError();
+        console.error("Failed to load product data:", error);
+
+        showError(
+            "Failed to load product data."
+        );
     }
 }
 
-//Error State
-
-function showError() {
-
-    document.getElementById("product-name").textContent = 
-        "No Product detected";
-
-    document.getElementById("current-price").textContent = 
-        "N/A";
-
-    document.getElementById("recommendation-text").textContent = 
-        "Open a supported Flipkart product page and try again.";
-}
-
-//starting point
+// Start
 
 loadProductData();

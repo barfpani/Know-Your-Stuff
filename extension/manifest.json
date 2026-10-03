@@ -13,10 +13,10 @@
                 "https://www.flipkart.com/*"
             ],
             "js": [
-                "priceParser.js",
-                "productNormalizer.js",
-                "Flipkart.js",
-                "content.js"
+                "utils/priceParser.js",
+                "utils/productNormalizer.js",
+                "content/parsers/Flipkart.js",
+                "content/content.js"
             ]
         }
     ],

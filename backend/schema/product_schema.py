@@ -18,7 +18,7 @@ class PricePoint(BaseModel):
     date: date
     price: float = Field(ge=0)
 
-class priceHistory(BaseModel):
+class PriceHistory(BaseModel):
     historical_prices: list[PricePoint] = Field(min_length=1)
 
     lowest_price: float = Field(ge=0)
@@ -39,5 +39,5 @@ class Recommendation(BaseModel):
 
 class ProductAnalysis(BaseModel):
     product: Product
-    price_history: priceHistory
+    price_history: PriceHistory
     recommendation: Recommendation

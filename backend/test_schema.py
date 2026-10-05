@@ -1,11 +1,36 @@
-from schema.product_schema import Product
+from schema.product_schema import PricePoint, PriceHistory
 
-product = Product(
-    title = "Sony WH-1000XM4 Wireless Noise-Canceling Over-Ear Headphones",
-    price = 33048.00,
-    availability = "IN_STOCK",
-    url = "https://www.flipkart.com/example-product-url",
-    source = "Flipkart",
+
+# Test 1: PricePoint
+price_point = PricePoint(
+    date="2026-09-01",
+    price=8999
 )
 
-print(product)
+print("PricePoint:")
+print(price_point)
+print()
+
+
+# Test 2: PriceHistory
+price_history = PriceHistory(
+    historical_prices=[
+        PricePoint(
+            date="2026-09-01",
+            price=8999
+        ),
+        PricePoint(
+            date="2026-09-15",
+            price=8499
+        ),
+        PricePoint(
+            date="2026-10-01",
+            price=8022
+        )
+    ],
+    lowest_price=8022,
+    highest_price=8999
+)
+
+print("PriceHistory:")
+print(price_history)

@@ -1,6 +1,6 @@
 from urllib.parse import urlencode, urlparse
 
-import httpx
+from playwright.async_api import async_playwright, Error as PlaywrightError
 
 PRICEBEFORE_BASE_URL = "https://www.pricebefore.com"
 
@@ -54,27 +54,40 @@ async def resolver_pricebefore_url(product_url: str) -> str:
     )
 
     try:
-        async with httpx.AsyncClient(
-            follow_redirects=True,
-            timeout=12.5,
-            max_redirects=5,
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X)"
-                    "AppleWebKit/537.36 (KHTML, like Gecko)"
+        async with async_playwright() as playwright:
+            browser = await playwright.chromium.launch(headless=True)
+
+            context = await browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
                     "Chrome/130.0.0.0 Safari/537.36"
+                ),
+                locale="en-IN"
+            )
+
+            page = await context.new_page()
+
+            response = await page.goto(
+                search_url,
+                wait_until="domcontentloaded",
+                timeout=30_000,
+            )
+
+            if response is None or response.status >= 400:
+                status = response.status if response else "no response"
+                raise PriceBeforeResolutionError(
+                    f"PriceBefore returned HTTP {status}."
                 )
-            },
-        ) as client:
-            response = await client.get(search_url)
-            response.raise_for_status()
 
-    except httpx.HTTPError as exc:
+            final_url = page.url
+            await browser.close()
+
+    except PlaywrightError as exc:
         raise PriceBeforeResolutionError(
-            "Could not reach PriceBefore or resolve the product. "
-        ) from exc 
+            "Could not resolve this product through PriceBefore."
+        )  from exc
 
-    final_url = str(response.url)
     final_parsed = urlparse(final_url)
 
     # Ensuring the redirect stayed on PriceBefore.

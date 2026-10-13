@@ -9,8 +9,6 @@ SUPPORTED_DOMAINS = {
     "www.amazon.in",
     "flipkart.com",
     "www.flipkart.com",
-    "pricebefore.com",
-    "www.pricebefore.com",
 }
 
 class PriceBeforeResolutionError(Exception):
@@ -86,7 +84,11 @@ async def resolver_pricebefore_url(product_url: str) -> str:
     except PlaywrightError as exc:
         raise PriceBeforeResolutionError(
             "Could not resolve this product through PriceBefore."
-        )  from exc
+        ) from exc
+
+    finally:
+        if browser is not None:
+            await browser.close()
 
     final_parsed = urlparse(final_url)
 

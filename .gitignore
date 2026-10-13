@@ -35,3 +35,8 @@ dist/
 # Browser extension local artifacts
 *.crx
 *.pem
+
+# environment variables
+.env
+*.env
+!.env.example

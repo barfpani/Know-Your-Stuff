@@ -73,7 +73,7 @@ async def extract_price_history(
         response = await client.aio.models.generate_content(
             model=MODEL_NAME,
             contents=prompt,
-            congfig=types.GenerateContentConfig(
+            config=types.GenerateContentConfig(
                 tools=[
                     types.Tool(
                         url_context=types.UrlContext()
@@ -102,3 +102,13 @@ async def extract_price_history(
 
     except GeminiExtractionError:
         raise
+
+    except (ValidationError, ValueError) as exc:
+        raise GeminiExtractionError(
+            "Gemini returned invalid historical price data."
+        ) from exc
+
+    except Exception as exc:
+        raise GeminiExtractionError(
+            "Gemini failed to extract price history."
+        ) from exc

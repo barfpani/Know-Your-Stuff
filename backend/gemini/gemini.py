@@ -25,7 +25,7 @@ client = genai.Client(api_key=API_KEY)
 
 class HistoricalPricePoint(BaseModel):
     """One historical product price."""
-    data: str = Field(
+    date: str = Field(
         description="Date in YYYY-MM-DD format."
     )
     price: float = Field(

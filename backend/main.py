@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from backend.pricebefore.resolver import (
-    resolver_priicebefore_url, PriceBeforeResolutionError,
+    resolver_pricebefore_url, PriceBeforeResolutionError,
 )
 
 from backend.gemini.gemini import (
@@ -42,7 +42,7 @@ async def analyse_product(product: Product):
 
     #Resolve the original product URL
     try:
-        pricebefore_url = await resolver_priicebefore_url(
+        pricebefore_url = await resolver_pricebefore_url(
             str(product.url)
         )
 

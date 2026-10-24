@@ -72,6 +72,15 @@ async def resolver_pricebefore_url(product_url: str) -> str:
                 timeout=30_000,
             )
 
+            print("Search URL:", search_url)
+            print("HTTP status:", response.status if response else None)
+            print("Final URL:", page.url)
+            print("Page title:", await page.title())
+
+            if response and response.status == 403:
+                print("Response body")
+                print((await page.locator("body").inner_text())[:1000])
+
             if response is None or response.status >= 400:
                 status = response.status if response else "no response"
                 raise PriceBeforeResolutionError(

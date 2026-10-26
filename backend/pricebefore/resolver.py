@@ -72,7 +72,7 @@ async def resolver_pricebefore_url(product_url: str) -> str:
                 timeout=30_000,
             )
 
-            print("Search URL:", search_url)
+            print("Search URL:", search_url) 
             print("HTTP status:", response.status if response else None)
             print("Final URL:", page.url)
             print("Page title:", await page.title())

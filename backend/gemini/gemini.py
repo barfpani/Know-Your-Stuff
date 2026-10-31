@@ -44,7 +44,7 @@ class Recommendation(BaseModel):
     score_breakdown: ScoreBreakdown
 
 
-class GeminiAnalysis(BaseModel)
+class GeminiAnalysis(BaseModel):
     analysis_available: bool
     historical_prices: list[HistricalPricePoint]
     lowest_price: Optional[float] = Field(default=None, ge=0)

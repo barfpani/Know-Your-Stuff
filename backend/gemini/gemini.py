@@ -1,12 +1,15 @@
+import math
 import os
 from pathlib import Path
+from typing import Literal, Optional
 
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from backend.prompt.extraction_prompt import EXTRACTION_PROMPT
+from backend.schema.product_schema import Product
 
 # loading backend/local.env, regardless of the current working directory.
 
@@ -23,92 +26,67 @@ if not API_KEY:
 
 client = genai.Client(api_key=API_KEY)
 
-class HistoricalPricePoint(BaseModel):
-    """One historical product price."""
-    date: str = Field(
-        description="Date in YYYY-MM-DD format."
-    )
-    price: float = Field(
-        ge=0,
-        description="Product price on that date."
-    )
+class HistricalPricePoint(BaseModel):
+    date: str = Field(description="Date in YYY-MM-DD format." )
+    price: float = Field(ge=0)
 
-class HistoricalPriceExtraction(BaseModel):
-    """Historical pricess extracted from a PriceBefore page."""
-    historical_prices: list[HistoricalPricePoint] = Field(
-        description=(
-            "Explicitly available historical price points. "
-            "Use as empty list if no reliable history is available."
-        )
-    )
+class ScoreBreakdown(BaseModel):
+    H: float = Field(ge=0, le=100)
+    R: float = Field(ge=0, le=100)
+    T: float = Field(ge=0, le=100)
+    P: float = Field(ge=0, le=100)
 
-class GeminiExtractionError(Exception):
-    """Raised when Gemini cannt extract valid price histroy."""
 
-async def extract_price_history(
-        pricebefore_url: str,
-) -> list[dict]:
-    """
-    Extract historical rice points from a resolved PriceBefore URL.
-    
-    Returns:
-        A list of dictionaries with date and price fields.
-        Returns an empty list when no history is available.
+class Recommendation(BaseModel):
+    score: float = Field(ge=0, le=100)
+    decision: Literal["BUY", "WAIT"]
+    reason: str = Field(min_length=1)
+    score_breakdown: ScoreBreakdown
+
+
+class GeminiAnalysis(BaseModel)
+    analysis_available: bool
+    historical_prices: list[HistricalPricePoint]
+    lowest_price: Optional[float] = Field(default=None, ge=0)
+    highest_price: Optional[float] = Field(default=None, ge=0)
+    recommnedation: Optional[Recommendation] = None
+
+    @model_validator(mode="after")
+    def validate_analysis(self):
+        if not self.analysis_available:
+            if self.historical_prices:
+                raise ValueError("Unavailable analysis must not include price history.")
+
+            if any(value is not None for value in (
+                    self.lowest_price,
+                    self.highest_price,
+                    self.recommnedation,
+                )
+            ):
+                raise ValueError(
+                    "Unavailable in analysis must not include price statistics "
+                    "or a recommnedation."
+                )
+
+            return self
         
-    Raises:
-    GeminiExtractionError: If the API call or validation fails
-    """
-
-    if not pricebefore_url.startswith("https://www.pricebefore.com/"):
-        raise ValueError("Exected a resolved PriceBefore product URL.")
-
-    prompt = (
-        f"{EXTRACTION_PROMPT}\n\n"
-        f"PriceBefore product URL: {pricebefore_url}\n\n"
-        "Extract only historical prices for this exact product."
-        "Do not invent or estimate missing values."
-    )
-
-    try:
-        response = await client.aio.models.generate_content(
-            model=MODEL_NAME,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                tools=[
-                    types.Tool(
-                        url_context=types.UrlContext()
-                    )
-                ],
-                response_mime_type="application/json",
-                response_schema=HistoricalPriceExtraction,
-                temperature=0,
-            ),
-        )
-
-        if not response.text:
-            raise GeminiExtractionError(
-                "Gemini returned an empty response."
+        if not self.historical_prices:
+            raise ValueError(
+                "Available analysis requires historical price points."
             )
 
-        extracted = HistoricalPriceExtraction.model_validate_json(
-            response.text
-        )
+        if self.lowest_price is None or self.highest_price is None:
+            raise ValueError(
+                "Available analysis requires lowest_price and highest_price."
+            )
 
-        return [
-            point.model_dump()
-            for point in extracted.historical_prices
-        ]
+        if self.recommendation is None:
+            raise ValueError(
+                "Available analysis requires a recommendation."
+            )
 
+        prices = [point.price for point in self.historical_prices]
+        actual_low = min(prices)
+        actual_high = max(prices)
 
-    except GeminiExtractionError:
-        raise
-
-    except (ValidationError, ValueError) as exc:
-        raise GeminiExtractionError(
-            "Gemini returned invalid historical price data."
-        ) from exc
-
-    except Exception as exc:
-        raise GeminiExtractionError(
-            "Gemini failed to extract price history."
-        ) from exc
+        if not

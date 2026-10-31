@@ -89,4 +89,102 @@ class GeminiAnalysis(BaseModel)
         actual_low = min(prices)
         actual_high = max(prices)
 
-        if not
+        if not math.isclose(
+            self.historical_prices,
+            actual_high,
+            rel_tol=0,
+            abs_tol=0.01,
+        ):
+
+            raise ValueError("highest_price does not match the extracted history.")
+
+        breakdown = self.recommnedation.score_breakdown
+
+        if breakdown.P not in {0, 5, 20}:
+            raise ValueError("P must be 0, 5, 20")
+
+        expected_score = min(
+            100,
+            max(
+                0,
+                round(
+                    (0.70 * breakdown.H)
+                    -(0.15 * breakdown.R)
+                    +(0.15 * breakdown.T)
+                    - breakdown.P,
+                    2,
+                ),
+            ),
+        )
+
+        if not math.isclose(
+            self.recommnedation.score,
+            expected_score,
+            rel_tol=0,
+            abs_tol=0.01,
+        ):
+            raise ValueError("Recommendation score does not match the scoring formula.")
+
+        expected_decision = ("BUY" if self.recommendation.score >= 60 else "WAIT")
+
+        if self.recommnedation.decision != expected_decision:
+            raise ValueError("Recommendation decision does not match the score threshold.")
+
+        return self
+
+class GeminiExtractionError(Exception):
+    """Raised when gemini returns invalid product analysis."""
+
+async def analyse_product_with_gemini(
+        product: Product,
+        pricebefore_url: str,
+)   -> GeminiAnalysis:
+    """Generate and validate once complete Gemini product analysis."""
+
+    if not pricebefore_url.startswith("https://www.pricebefore.com/"):
+        raise ValueError("Expected a resolved PriceBefore product URL.")
+
+    prompt = f"""
+{EXTRACTION_PROMPT}
+
+PRODUCT DETAILS:
+- Product name: {product.title}
+- Current product price: {product.price}
+- Original ecommerce product URL: {product.url}
+- Ecommerce source: {product.source}
+- Product availability: {product.availability}
+
+PRICE HISTORY SOURCE:
+- PriceBefore product page URL: {pricebefore_url}
+"""
+
+    try:
+        response = await client.aio.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+            comfig=types.GenerateContentConfig(
+                tools=[
+                    types.Tool(
+                        url_context=types.UrlContext()
+                    )
+                ],
+                response_mime_type="application/json",
+                response_schema=GeminiAnalysis,
+                temperature=0,
+            ),
+        )
+
+        if not response.text:
+            raise GeminiExtractionError("Gemini returned an empty response")
+
+        return GeminiAnalysis.model_validate(response.text)
+
+    except GeminiExtractionError:
+        raise
+
+    except ValidationError as exc:
+        raise GeminiExtractionError("Gemini returned invalid product analysis") from exc
+
+    except Exception as exc:
+        raise GeminiExtractionError("Gemni failed to analyse the product.") from exc
+    

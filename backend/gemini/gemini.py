@@ -162,7 +162,7 @@ PRICE HISTORY SOURCE:
         response = await client.aio.models.generate_content(
             model=MODEL_NAME,
             contents=prompt,
-            comfig=types.GenerateContentConfig(
+            config=types.GenerateContentConfig(
                 tools=[
                     types.Tool(
                         url_context=types.UrlContext()

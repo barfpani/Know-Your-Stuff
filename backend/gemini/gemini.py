@@ -49,7 +49,7 @@ class GeminiAnalysis(BaseModel):
     historical_prices: list[HistricalPricePoint]
     lowest_price: Optional[float] = Field(default=None, ge=0)
     highest_price: Optional[float] = Field(default=None, ge=0)
-    recommnedation: Optional[Recommendation] = None
+    recommendation: Optional[Recommendation] = None
 
     @model_validator(mode="after")
     def validate_analysis(self):
@@ -60,12 +60,12 @@ class GeminiAnalysis(BaseModel):
             if any(value is not None for value in (
                     self.lowest_price,
                     self.highest_price,
-                    self.recommnedation,
+                    self.recommendation,
                 )
             ):
                 raise ValueError(
                     "Unavailable in analysis must not include price statistics "
-                    "or a recommnedation."
+                    "or a recommendation."
                 )
 
             return self
@@ -98,7 +98,7 @@ class GeminiAnalysis(BaseModel):
 
             raise ValueError("highest_price does not match the extracted history.")
 
-        breakdown = self.recommnedation.score_breakdown
+        breakdown = self.recommendation.score_breakdown
 
         if breakdown.P not in {0, 5, 20}:
             raise ValueError("P must be 0, 5, 20")
@@ -118,7 +118,7 @@ class GeminiAnalysis(BaseModel):
         )
 
         if not math.isclose(
-            self.recommnedation.score,
+            self.recommendation.score,
             expected_score,
             rel_tol=0,
             abs_tol=0.01,
@@ -127,7 +127,7 @@ class GeminiAnalysis(BaseModel):
 
         expected_decision = ("BUY" if self.recommendation.score >= 60 else "WAIT")
 
-        if self.recommnedation.decision != expected_decision:
+        if self.recommendation.decision != expected_decision:
             raise ValueError("Recommendation decision does not match the score threshold.")
 
         return self
@@ -177,7 +177,7 @@ PRICE HISTORY SOURCE:
         if not response.text:
             raise GeminiExtractionError("Gemini returned an empty response")
 
-        return GeminiAnalysis.model_validate(response.text)
+        return GeminiAnalysis.model_validate_json(response.text)
 
     except GeminiExtractionError:
         raise

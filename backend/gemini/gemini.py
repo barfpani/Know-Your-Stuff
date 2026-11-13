@@ -17,7 +17,7 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 load_dotenv(BACKEND_DIR / "local.env")
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 
 if not API_KEY:
     raise RuntimeError(
@@ -46,6 +46,7 @@ class Recommendation(BaseModel):
 
 class GeminiAnalysis(BaseModel):
     analysis_available: bool
+    unavailable_reason: Optional[str] = Field(default=None, description="Reason why analysis is unavailable.")
     historical_prices: list[HistricalPricePoint]
     lowest_price: Optional[float] = Field(default=None, ge=0)
     highest_price: Optional[float] = Field(default=None, ge=0)
@@ -90,13 +91,21 @@ class GeminiAnalysis(BaseModel):
         actual_high = max(prices)
 
         if not math.isclose(
-            self.historical_prices,
+            self.highest_price,
             actual_high,
             rel_tol=0,
             abs_tol=0.01,
         ):
 
             raise ValueError("highest_price does not match the extracted history.")
+
+        if not math.isclose(
+            self.lowest_price,
+            actual_low,
+            rel_tol=0,
+            abs_tol=0.01,
+        ):
+            raise ValueError("lowest_price does not match the extracted history.")      
 
         breakdown = self.recommendation.score_breakdown
 
@@ -157,6 +166,7 @@ PRODUCT DETAILS:
 PRICE HISTORY SOURCE:
 - PriceBefore product page URL: {pricebefore_url}
 """
+    print(f"Using Gemini model: {MODEL_NAME}")
 
     try:
         response = await client.aio.models.generate_content(

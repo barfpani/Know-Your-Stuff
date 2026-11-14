@@ -13,16 +13,14 @@ PRODUCT = Product(
     price=12999,
     availability="IN_STOCK",
     url=(
-        "https://www.flipkart.com/"
-        "skullcandy-crusher-evo-40mm-drivers-40hr-playtime-rapid-charge/"
-        "p/itmc7c802dc62ef2"
+        "https://www.pricebefore.com/"
+        "sony-wf-c710n-lzin-bluetooth-p917835.html"
     ),
     source="Flipkart",
 )
 
 PRICEBEFORE_URL = (
-    "https://www.pricebefore.com/"
-    "skullcandy-crusher-evo-40mm-drivers-40hr-p918702.html"
+    "https://www.pricebefore.com/sony-wf-c710n-lzin-bluetooth-p917835.html"
 )
 
 

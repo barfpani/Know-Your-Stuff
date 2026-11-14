@@ -105,7 +105,7 @@ class GeminiAnalysis(BaseModel):
             rel_tol=0,
             abs_tol=0.01,
         ):
-            raise ValueError("lowest_price does not match the extracted history.")      
+            raise ValueError("lowest_price does not match the extracted history.")
 
         breakdown = self.recommendation.score_breakdown
 

@@ -6,7 +6,7 @@ from backend.pricebefore.resolver import (
 )
 
 from backend.gemini.gemini import (
-    extract_price_history, GeminiExtractionError,
+    analyse_product_with_gemini, GeminiExtractionError,
 )
 
 from backend.schema.product_schema import (
@@ -60,8 +60,9 @@ async def analyse_product(product: Product):
 
     #Extract historical prices using gemini.
     try:
-        history_data = await extract_price_history(
-            pricebefore_url
+        history_data = await analyse_product_with_gemini(
+            product, 
+            pricebefore_url,
         )
 
     except GeminiExtractionError as exc:

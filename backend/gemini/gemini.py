@@ -187,6 +187,7 @@ PRICE HISTORY SOURCE:
         if not response.text:
             raise GeminiExtractionError("Gemini returned an empty response")
 
+        print(response.text)
         return GeminiAnalysis.model_validate_json(response.text)
 
     except GeminiExtractionError:

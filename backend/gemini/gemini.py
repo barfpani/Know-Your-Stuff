@@ -117,11 +117,7 @@ class GeminiAnalysis(BaseModel):
             max(
                 0,
                 round(
-                    (0.70 * breakdown.H)
-                    -(0.15 * breakdown.R)
-                    +(0.15 * breakdown.T)
-                    - breakdown.P,
-                    2,
+                    (0.70 * breakdown.H)-(0.15 * breakdown.R)+(0.15 * breakdown.T) - breakdown.P,2,
                 ),
             ),
         )
@@ -169,7 +165,7 @@ PRICE HISTORY SOURCE:
     print(f"Using Gemini model: {MODEL_NAME}")
 
     try:
-        response = await client.aio.models.generate_content(
+        response = await client.aio.models.generate_content( 
             model=MODEL_NAME,
             contents=prompt,
             config=types.GenerateContentConfig(

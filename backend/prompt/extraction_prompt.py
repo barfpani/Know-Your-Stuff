@@ -122,17 +122,8 @@ P reduces the Buy Score only when reliable sale evidence is available.
 
 FINAL SCORE AND DECISION
 
-1. Calculate the unadjusted score:
-
-   B = 0.70H - 0.15R + 0.15T
-
-2. Calculate the final Buy Score and round it to two decimal places:
-
-   score = min(100, max(0, B - P))
-
-3. Select BUY when score is 60 or higher. Select WAIT when score is below 60.
-4. The recommendation reason must refer only to evidence in the product details,
-   history, and verified sale information. Do not make unsupported predictions.
+The recommendation reason must refer only to evidence in the product details,
+history, and verified sale information. Do not make unsupported predictions.
 
 MISSING OR UNRELIABLE HISTORY
 
@@ -158,8 +149,6 @@ Successful analysis:
   "lowest_price": 0,
   "highest_price": 0,
   "recommendation": {
-    "score": 0,
-    "decision": "BUY",
     "reason": "Concise explanation supported by the available evidence.",
     "score_breakdown": {
       "H": 0,

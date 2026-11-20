@@ -163,6 +163,7 @@ Unavailable analysis:
 
 {
   "analysis_available": false,
+  "unavailable_reason": "Concise explanation of why analysis is unavailable.",
   "historical_prices": [],
   "lowest_price": null,
   "highest_price": null,
@@ -177,7 +178,5 @@ OUTPUT RULES
 - All dates must use YYYY-MM-DD format.
 - For successful analysis, lowest_price and highest_price must match the
   historical price points exactly.
-- For successful analysis, score must equal the formula result from H, R, T,
-  and P.
 - Do not fabricate values to fill missing data.
 """

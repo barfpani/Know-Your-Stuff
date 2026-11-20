@@ -38,8 +38,6 @@ class ScoreBreakdown(BaseModel):
 
 
 class Recommendation(BaseModel):
-    score: float = Field(ge=0, le=100)
-    decision: Literal["BUY", "WAIT"]
     reason: str = Field(min_length=1)
     score_breakdown: ScoreBreakdown
 
@@ -50,7 +48,6 @@ class GeminiAnalysis(BaseModel):
     historical_prices: list[HistricalPricePoint]
     lowest_price: Optional[float] = Field(default=None, ge=0)
     highest_price: Optional[float] = Field(default=None, ge=0)
-    recommendation: Optional[Recommendation] = None
 
     @model_validator(mode="after")
     def validate_analysis(self):
@@ -61,7 +58,6 @@ class GeminiAnalysis(BaseModel):
             if any(value is not None for value in (
                     self.lowest_price,
                     self.highest_price,
-                    self.recommendation,
                 )
             ):
                 raise ValueError(
@@ -111,29 +107,6 @@ class GeminiAnalysis(BaseModel):
 
         if breakdown.P not in {0, 5, 20}:
             raise ValueError("P must be 0, 5, 20")
-
-        expected_score = min(
-            100,
-            max(
-                0,
-                round(
-                    (0.70 * breakdown.H)-(0.15 * breakdown.R)+(0.15 * breakdown.T) - breakdown.P,2,
-                ),
-            ),
-        )
-
-        if not math.isclose(
-            self.recommendation.score,
-            expected_score,
-            rel_tol=0,
-            abs_tol=0.01,
-        ):
-            raise ValueError("Recommendation score does not match the scoring formula.")
-
-        expected_decision = ("BUY" if self.recommendation.score >= 60 else "WAIT")
-
-        if self.recommendation.decision != expected_decision:
-            raise ValueError("Recommendation decision does not match the score threshold.")
 
         return self
 
